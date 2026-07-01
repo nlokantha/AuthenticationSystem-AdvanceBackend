@@ -5,7 +5,6 @@ import { authService } from "./auth.service";
 export const createUser = async (req:Request,res:Response,next:NextFunction)=>{
     try{
         const {name,email,password} = req.body
-        // Call the service to create the user
         const result = await authService.registerUser(name,email,password)
         res.status(201).json({
             success:true,

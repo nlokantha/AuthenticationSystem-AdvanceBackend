@@ -13,7 +13,7 @@ export const authService = {
             throw new ApiError(400, "User already exists")
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10)
+        const hashedPassword = await bcrypt.hash(password, 12)
 
         const user = await authRepository.createUser(name, email, hashedPassword)
 
