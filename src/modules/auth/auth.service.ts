@@ -3,6 +3,7 @@ import { ApiError } from "../../utils/apiError"
 import { generateAccessToken, generateRefreshToken } from "../../utils/jwt"
 import { authRepository } from "./auth.repository"
 import bcrypt from "bcrypt"
+import logger from "../../lib/logger"
 
 
 export const authService = {
@@ -17,11 +18,14 @@ export const authService = {
 
         const user = await authRepository.createUser(name, email, hashedPassword)
 
+        // logger.info("user", { id: user.id, email: user.email, name: user.name, role: user.role })
+
         const accessToken = generateAccessToken(user.id, user.role)
         const { token: refreshToken, jti } = generateRefreshToken(user.id)
 
         await redis.set(`refreshToken:${jti}`, user.id, "EX", 30 * 24 * 60 * 60) // Store refresh token in Redis with expiration
 
+        logger.info("User registered successfully")
         return { accessToken, refreshToken }
     },
 
@@ -42,6 +46,7 @@ export const authService = {
 
         await redis.set(`refreshToken:${jti}`, user.id, "EX", 30 * 24 * 60 * 60) // Store refresh token in Redis with expiration
 
+        logger.info("User logged in successfully")
         return { accessToken, refreshToken }
     },
 
